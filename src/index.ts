@@ -9,8 +9,6 @@ const token = sign({
   secret: "supersecret",
 });
 
-console.log(token)
-
 const decoded = verify({
   token,
   secret: "supersecret"
