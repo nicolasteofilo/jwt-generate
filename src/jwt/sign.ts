@@ -1,5 +1,4 @@
-import { createHmac } from "node:crypto";
-
+import { generateSignature } from "./utils/generateSignature";
 import { objectToBase64URL } from "./utils/objectToBase64URL";
 
 interface ISignOptions {
@@ -8,26 +7,26 @@ interface ISignOptions {
   secret: string;
 }
 
-export function sign(options: ISignOptions) {
+export function sign({ data, exp, secret }: ISignOptions) {
   const header = {
     alg: "HS256",
     typ: "JWT",
   };
 
   const payload = {
-    ...options.data,
+    ...data,
     iat: Date.now(),
-    exp: options.exp,
+    exp,
   };
 
   const base64URLEncodedHeader = objectToBase64URL(header);
   const base64URLEncodedPayload = objectToBase64URL(payload);
 
-  const hmac = createHmac("sha256", options.secret);
-
-  const signature = hmac
-    .update(`${base64URLEncodedHeader}.${base64URLEncodedPayload}`)
-    .digest("base64url");
+  const signature = generateSignature({
+    headerBase64URL: base64URLEncodedHeader,
+    payloadBase64URL: base64URLEncodedPayload,
+    secret,
+  });
 
   const token = `${base64URLEncodedHeader}.${base64URLEncodedPayload}.${signature}`;
   return token;

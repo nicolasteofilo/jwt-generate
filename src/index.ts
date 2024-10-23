@@ -1,12 +1,17 @@
-import { sign } from "./jwt/sign";
+import { sign, verify } from "./jwt";
 
 const token = sign({
-  exp: Date.now() + (24 * 60 * 60 * 1000), // hours -> minutes -> seconds -> milliseconds = 1 day
+  exp: Date.now() + 24 * 60 * 60 * 1000, // hours -> minutes -> seconds -> milliseconds = 1 day
   data: {
-    sub: '@nicolasteofilo',
-    email: 'nicolasteofilodecastro@gmail.com',
+    sub: "@nicolasteofilo",
+    email: "nicolas.dev@gmail.com",
   },
-  secret: 'supersecret'
-})
+  secret: "supersecret",
+});
 
 console.log(token)
+
+const decoded = verify({
+  token,
+  secret: "supersecret"
+});
